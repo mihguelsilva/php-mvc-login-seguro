@@ -1,0 +1,19 @@
+# Ignorar o arquivo de configuração com dados sensíveis
+config/config.php
+
+# Ignorar composer.lock
+composer.lock
+
+# Ignorar pasta vendor
+/vendor/
+
+# Ignorar arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar configurações do IDE
+.idea/
+.vscode/
+
+# Ignorar arquivos de log
+*.log

@@ -1,0 +1,14 @@
+<?php
+
+// Banco de dados
+define('DB_HOST', 'localhost');  // Altere para o seu host de banco de dados
+define('DB_NAME', 'nome_do_banco');  // Altere para o nome do banco de dados
+define('DB_USER', 'usuario');  // Altere para seu usuário de banco de dados
+define('DB_PASS', 'senha');  // Altere para sua senha de banco de dados
+
+// Chave secreta para autenticação (exemplo: JWT, sessões, etc.)
+define('SECRET_KEY', 'sua_chave_secreta');
+
+// Outras configurações
+define('SITE_NAME', 'Meu Projeto Seguro');  // Altere conforme o nome do seu site
+?>

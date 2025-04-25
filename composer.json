@@ -1,0 +1,9 @@
+{
+    "name": "mihguel/php-mvc-login-seguro",
+    "autoload": {
+        "psr-4": {
+            "App\\": "App/",
+            "Core\\": "Core/"
+        }
+    }
+}
