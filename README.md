@@ -12,21 +12,24 @@ Um sistema de login seguro utilizando PHP puro com arquitetura MVC, sessions, ro
 - Sessões PHP (`$_SESSION`)
 - Hash de senhas com `password_hash`
 - Autoload com PSR-4
+- **PHPMailer** para envio de e-mails
 - Estrutura MVC customizada
 
 ---
 
-## 🛡️ Funcionalidades
+## 🛡️ **Funcionalidades**
 
-✅ Autenticação com senha segura  
-✅ Logout seguro com `session_destroy`  
-✅ Controle de sessão com `$_SESSION`  
-✅ Proteção contra acesso não autorizado  
-✅ Middleware de verificação de login  
-✅ Roteamento simples com método + URI  
-✅ Página protegida (`/dashboard`)  
-✅ Mensagens dinâmicas de erro e sucesso  
-✅ Separação de responsabilidades (MVC)
+✅ **Autenticação com senha segura**  
+✅ **Logout seguro com** `session_destroy`  
+✅ **Controle de sessão com** `$_SESSION`  
+✅ **Proteção contra acesso não autorizado**  
+✅ **Middleware de verificação de login**  
+✅ **Roteamento simples com método + URI**  
+✅ **Página protegida** (`/dashboard`)  
+✅ **Mensagens dinâmicas de erro e sucesso**  
+✅ **Separação de responsabilidades (MVC)**  
+✅ **Armazenamento seguro de senhas** com `password_hash()`  
+✅ **Redirecionamento automático** após login/logout  
 
 ---
 
@@ -69,39 +72,38 @@ INSERT INTO users (username, password) VALUES (
 php-mvc-login-seguro/
 ├── App/
 │   ├── Controllers/
-|   |    ├── AdminController.php
-|   |    ├── BeginController.php
-|   |    ├── HomeController.php
-|   |    └── LoginController.php
-|   ├── Helpers/
-|   |    ├── Auth.php
-|   |    └── Flash.php
+│   │    ├── AdminController.php
+│   │    ├── BeginController.php
+│   │    ├── HomeController.php
+│   │    └── LoginController.php
+│   ├── Helpers/
+│   │    ├── Auth.php
+│   │    └── Flash.php
 │   ├── Middleware/
-|   |    └── Auth.php
+│   │    └── Auth.php
 │   ├── Models/
-|   |   └── User.php
+│   │    └── User.php
 │   └── Views/
-|       ├── admin/
-|       |      └── edit.php
-|       ├── user/
-|       |    ├── delete.php
-|       |    └── edit.php
-|       ├── begin.php
-|       ├── dashboard.php
-|       ├── home.php
-|       ├── layout.php
-|       ├── login.php
-|       └── register.php
-|       
+│       ├── admin/
+│       │      └── edit.php
+│       ├── user/
+│       │    ├── delete.php
+│       │    └── edit.php
+│       ├── begin.php
+│       ├── dashboard.php
+│       ├── home.php
+│       ├── layout.php
+│       ├── login.php
+│       └── register.php
 ├── config/
 │   └── config.php.example
-|   └── router.php
+│   └── router.php
 ├── Core/
-|   ├── Controller.php
-|   ├── Database.php
-|   └── Router.php
+│   ├── Controller.php
+│   ├── Database.php
+│   └── Router.php
 ├── public/
-|   ├── .htaccess
+│   ├── .htaccess
 │   └── index.php
 ├── composer.json
 └── README.md
@@ -111,10 +113,10 @@ php-mvc-login-seguro/
 
 - Arquitetura MVC
 - Roteamento manual
-- Middleware básico
-- Hash e verificação de senha
-- Redirecionamentos
-- Organização de código
+- Middleware básico para controle de autenticação
+- Hash e verificação de senha com `password_hash()` e `password_verify()`
+- Redirecionamentos automáticos após login/logout
+- Organização de código e boas práticas de segurança com PHP
 - Segurança com sessões
 
 ## 🧪 Testes manuais
@@ -130,3 +132,8 @@ GitHub: [@mihguelsilva](https://github.com/mihguelsilva)
 ## 📝 Licença
 
 Este projeto está sob a licença MIT. Sinta-se à vontade para utilizar, modificar e contribuir.
+
+## 💬 Feedback
+
+Gostou do projeto? Tem sugestões de melhorias? Deixe um comentário ou abra uma issue no GitHub.
+Sua contribuição é muito bem-vinda! 😄
