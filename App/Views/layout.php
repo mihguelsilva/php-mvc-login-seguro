@@ -114,7 +114,7 @@
     <footer class="mt-5 text-center text-muted">
         <hr>
         <div>
-            <small>Desenvolvido com ❤️ por <strong>Miguel da Silva Santos Tavares de Araujo</strong></small>
+            <small>Desenvolvido com ❤️ por <strong>Mihguel da Silva Santos Tavares de Araujo</strong></small>
         </div>
         <div class="mt-3">
             <a href="https://www.linkedin.com/in/mihguel-da-silva-santos-tavares-de-araujo/" target="_blank" class="btn btn-outline-primary btn-sm">LinkedIn</a>
