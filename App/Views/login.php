@@ -2,9 +2,7 @@
 
 <div class="row justify-content-center">
   <div class="col-md-6">
-  <?php if ($msg = App\Helpers\Flash::get('error')): ?>
-    <div class="alert alert-danger"><?= htmlspecialchars($msg) ?></div>
-  <?php endif; ?>
+   <?=App\Helpers\Flash::display()?>
     <div class="card shadow rounded">
       <div class="card-body">
         <h3 class="card-title mb-4 text-center">🔐 Login</h3>

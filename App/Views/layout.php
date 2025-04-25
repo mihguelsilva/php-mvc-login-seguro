@@ -74,6 +74,9 @@
                 <li class="nav-item">
                     <a class="nav-link <?php echo ($_SERVER['REQUEST_URI'] == '/') ? 'active-page' : ''; ?>" href="/" class='btn btn-outline-danger'>Projeto</a>
                 </li>
+                <div class="d-flex text-light">
+                <a class="nav-link <?php echo ($_SERVER['REQUEST_URI'] == '/contato') ? 'active-page' : ''; ?>" href="/contato" class='btn btn-outline-danger'>Contato</a>
+            </div>
                 <?php if (App\Helpers\Auth::check()): ?>
                     <li class="nav-item">
                         <a class="nav-link <?php echo ($_SERVER['REQUEST_URI'] == '/home') ? 'active-page' : ''; ?>" href="/home" class='btn btn-outline-primary'>HOME</a>

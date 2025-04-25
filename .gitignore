@@ -1,6 +1,9 @@
 # Ignorar o arquivo de configuração com dados sensíveis
 config/config.php
 
+# Ignorar o arquivo .env
+.env
+
 # Ignorar composer.lock
 composer.lock
 

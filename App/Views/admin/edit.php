@@ -1,4 +1,5 @@
 <?php ob_start(); ?>
+<?=\App\Helpers\Flash::display()?>
 <div class="container mt-5">
     <h2>✏️ Editar Usuário</h2>
     <form action="/admin/users/update" method="POST">

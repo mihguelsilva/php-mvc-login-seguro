@@ -1,6 +1,10 @@
 <?php
 define("DS", DIRECTORY_SEPARATOR);
+define("ROOT_DIR", dirname(__DIR__));
 require_once '..' .DS . 'vendor' . DS . 'autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(ROOT_DIR);
+$dotenv->load();
 
 use \Core\Router;
 

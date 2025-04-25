@@ -1,5 +1,5 @@
 <?php ob_start(); ?>
-
+<?php App\Helpers\Flash::display()?>
 <div class="container mt-5">
   <h2>👥 Gerenciamento de Usuários</h2>
   <table class="table table-striped mt-4">

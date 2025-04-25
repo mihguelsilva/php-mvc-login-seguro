@@ -1,8 +1,6 @@
 <?php ob_start(); ?>
 
-<?php if ($msg = App\Helpers\Flash::get('error')): ?>
-    <div class="alert alert-danger"><?= htmlspecialchars($msg) ?></div>
-<?php endif; ?>
+<?=App\Helpers\Flash::display()?>
 
 <form method="POST" action="/user/delete" onsubmit="return confirm('Tem certeza que deseja excluir sua conta? Esta ação é irreversível.');">
     <h2>Quer mesmo deletar sua conta?</h2>

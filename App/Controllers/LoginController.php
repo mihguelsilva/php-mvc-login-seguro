@@ -3,7 +3,9 @@
 namespace App\Controllers;
 
 use \Core\Controller;
+use \Core\Mailer;
 use \App\Models\User;
+use \App\Models\MensagemContato;
 use \App\Helpers\Flash;
 use \App\Middleware\Auth;
 
@@ -69,7 +71,18 @@ class LoginController extends Controller
             exit();
         }
 
-        User::create($username, $email, $password);
+        User::createUser($username, $email, $password);
+
+        $subject = 'Cadastro realizado com sucesso';
+        $body = "<strong>Parabéns $email</strong>, <p>você acaba de se cadastrar no nosso sistema de login seguro<p>";
+        Mailer::send($_ENV['MAIL_TO'], $subject, $body);
+
+        MensagemContato::salvar([
+            "nome"=>$username,
+            "email"=>$email,
+            "assunto"=>\htmlspecialchars($subject),
+            "mensagem"=>nl2br(htmlspecialchars($body))
+        ]);
 
         Flash::set('success', 'Usuário cadastrado com sucesso. Faça login!');
         $this->view('register');
