@@ -74,14 +74,20 @@ php-mvc-login-seguro/
 │   ├── Controllers/
 │   │    ├── AdminController.php
 │   │    ├── BeginController.php
+|   |    ├── ContatoController.php
 │   │    ├── HomeController.php
 │   │    └── LoginController.php
 │   ├── Helpers/
 │   │    ├── Auth.php
-│   │    └── Flash.php
+|   |    ├── Csrf.php
+│   │    ├── Flash.php
+│   │    ├── Sanitize.php
+│   │    ├── SessionManager.php
+│   │    └── TemplateEngine.php
 │   ├── Middleware/
 │   │    └── Auth.php
 │   ├── Models/
+|   |    ├── MensagemContato.php
 │   │    └── User.php
 │   └── Views/
 │       ├── admin/
@@ -90,6 +96,7 @@ php-mvc-login-seguro/
 │       │    ├── delete.php
 │       │    └── edit.php
 │       ├── begin.php
+│       ├── contato.php
 │       ├── dashboard.php
 │       ├── home.php
 │       ├── layout.php
@@ -101,10 +108,14 @@ php-mvc-login-seguro/
 ├── Core/
 │   ├── Controller.php
 │   ├── Database.php
+│   ├── Mailer.php
 │   └── Router.php
 ├── public/
 │   ├── .htaccess
 │   └── index.php
+├── static/
+│   └── html/
+│   |   └── email_message.php
 ├── composer.json
 └── README.md
 ```
