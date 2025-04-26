@@ -12,6 +12,7 @@
         <?php endif; ?>
 
         <form method="post" action="/login">
+          <?=\App\Helpers\Csrf::getTokenInput();?>
           <div class="mb-3">
             <label for="username" class="form-label">Usuário</label>
             <input type="text" class="form-control" name="username" required>

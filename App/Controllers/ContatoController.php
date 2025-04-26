@@ -4,7 +4,9 @@ namespace App\Controllers;
 use \Core\Controller;
 use \Core\Mailer;
 use \App\Models\MensagemContato;
+use \App\Helpers\Csrf;
 use \App\Helpers\Flash;
+use \App\Helpers\Sanitize;
 use \App\Helpers\TemplateEngine;
 
 class ContatoController extends Controller
@@ -16,10 +18,16 @@ class ContatoController extends Controller
 
     public function enviar(): void
     {
-        $nome = $_POST['nome'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $assunto = $_POST['assunto'] ?? '';
-        $mensagem = $_POST['mensagem'] ?? '';
+        Flash::checkSessionStart();
+
+        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
+            die('Erro de validação');
+        }
+
+        $nome = Sanitize::string($_POST['nome']) ?? '';
+        $email = Sanitize::email($_POST['email']) ?? '';
+        $assunto = Sanitize::string($_POST['assunto']) ?? '';
+        $mensagem = Sanitize::string($_POST['mensagem']) ?? '';
 
         if (empty($nome) || empty($email) || empty($mensagem)) {
             Flash::set('error', 'Preencha todos os campos obrigatórios');

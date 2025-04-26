@@ -6,6 +6,7 @@
             <div class="card-body">
                 <h3 class="card-title mb-4 text-center">Atualizar</h3>
                 <form action="/user/edit" method="POST">
+                    <?=\App\Helpers\Csrf::getTokenInput();?>
                     <div class="mb-3">
                         <label for="username" class="form-label">Nome de usuário</label>
                         <input type="text" id="username" name="username" class="form-control" value="<?= htmlspecialchars($user['username']); ?>" required>

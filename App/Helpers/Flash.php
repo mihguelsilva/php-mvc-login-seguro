@@ -3,7 +3,7 @@ namespace App\Helpers;
 
 class Flash
 {
-    private static function checkSessionStart(): void
+    public static function checkSessionStart(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

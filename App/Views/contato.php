@@ -4,6 +4,7 @@
 
 <h2>Contato</h2>
 <form action="/contato/enviar" method="post">
+    <?=\App\Helpers\Csrf::getTokenInput();?>
     <div class="form-group">
         <label class="form-label" for="nome">Nome:
         <input type="text" name="nome" id="nome" class="form-control" required>

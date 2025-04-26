@@ -3,7 +3,9 @@ namespace App\Controllers;
 
 use \Core\Controller;
 use \App\Middleware\Auth;
+use \App\Helpers\Csrf;
 use \App\Helpers\Flash;
+use \App\Helpers\Sanitize;
 use \App\Models\User;
 
 class AdminController extends Controller
@@ -15,27 +17,34 @@ class AdminController extends Controller
         $all = User::all();
 
         $this->view('dashboard', ['users'=>$all]);
+        exit();
     }
 
     public function edit(): void
     {
         Auth::admin();
 
-        $id = (int) $_GET['id'] ?? '';
+        $id = (int) Sanitize::int($_GET['id']) ?? '';
 
         $user = User::findById($id);
 
         $this->view('admin' . DS . 'edit', ['user'=>$user]);
+        exit();
     }
 
     public function update(): void
     {
+        Flash::checkSessionStart();
         Auth::admin();
 
-        $id = $_POST['id'] ?? '';
-        $username = $_POST['username'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $group = $_POST['group'] ?? '';
+        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
+            die('Erro de validação');
+        }
+
+        $id = (int) Sanitize::int($_POST['id']) ?? '';
+        $username = Sanitize::string($_POST['username']) ?? '';
+        $email = Sanitize::email($_POST['email']) ?? '';
+        $group = Sanitize::string($_POST['group']) ?? '';
 
         if (User::updateUser($username, $email,(int) $id, $group)) {
             Flash::set('success', 'Dados do usuário atualizados com sucesso');
@@ -50,9 +59,14 @@ class AdminController extends Controller
 
     public function delete(): void
     {
+        Flash::checkSessionStart();
         Auth::admin();
 
-        $id = $_POST['id'] ?? '';
+        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
+            die('Erro de validação');
+        }
+
+        $id = (int) Sanitize::int($_POST['id']) ?? '';
 
         if (User::deleteUser($id)) {
             Flash::set('success', 'Usuário deletado com sucesso');

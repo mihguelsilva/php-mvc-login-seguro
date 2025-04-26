@@ -1,11 +1,13 @@
 <?php
 namespace App\Middleware;
 
+use \App\Helpers\SessionManager;
+
 class Auth
 {
     public static function check(): void
     {
-        session_start();
+        SessionManager::validateSessionTimeout();
         
         if (!isset($_SESSION['user'])) {
             header("Location: /login");
@@ -15,7 +17,7 @@ class Auth
 
     public static function admin(): void
     {
-        session_start();
+        SessionManager::validateSessionTimeout();
         if ($_SESSION['user']['group'] != 'admin') {
             header('Location: /home');
             exit();

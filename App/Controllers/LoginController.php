@@ -7,6 +7,8 @@ use \Core\Mailer;
 use \App\Models\User;
 use \App\Models\MensagemContato;
 use \App\Helpers\Flash;
+use \App\Helpers\Csrf;
+use \App\Helpers\Sanitize;
 use \App\Middleware\Auth;
 
 class LoginController extends Controller
@@ -39,10 +41,15 @@ class LoginController extends Controller
 
     public function createUser(): void
     {
-        $username = $_POST['username'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-        $confirmPassword = $_POST['confirm_password'] ?? '';
+
+        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
+            die('Erro de validação');
+        }
+
+        $username = Sanitize::string($_POST['username']) ?? '';
+        $email = Sanitize::email($_POST['email']) ?? '';
+        $password = Sanitize::string($_POST['password']) ?? '';
+        $confirmPassword = Sanitize::string($_POST['confirm_password']) ?? '';
 
         if (empty($username || $email || $password || $confirmPassword)) {
             Flash::set('error', 'Preencha todos os campos');
@@ -91,8 +98,12 @@ class LoginController extends Controller
 
     public function login(): void
     {
-        $username = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
+        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
+            die('Erro de validação');
+        }
+
+        $username = Sanitize::string($_POST['username']) ?? '';
+        $password = Sanitize::string($_POST['password']) ?? '';
 
         if (empty($username || $password)) {
             Flash::set('error', 'Preencha todos os campos');
@@ -123,11 +134,15 @@ class LoginController extends Controller
 
     public function updateUser()
     {
-        session_start();
+        Flash::checkSessionStart();
 
-        $username = $_POST['username'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $userId = $_SESSION['user']['id'];
+        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
+            die('Erro de validação');
+        }
+
+        $username = Sanitize::string($_POST['username']) ?? '';
+        $email = Sanitize::email($_POST['email']) ?? '';
+        $userId = (int) Sanitize::int($_SESSION['user']['id']);
 
         if (!isset($username) || !isset($email))
         {
@@ -149,8 +164,13 @@ class LoginController extends Controller
 
     public function deleteUser()
     {
-        session_start();
-        $userId = (int) $_SESSION['user']['id'];
+        Flash::checkSessionStart();
+
+        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
+            die('Erro de validação');
+        }
+
+        $userId = (int) Sanitize::int($_SESSION['user']['id']);
 
         if (User::deleteUser($userId)) {
             $this->logout();
