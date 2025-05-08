@@ -1,6 +1,7 @@
 # 🔐 php-mvc-login-seguro
 
-Um sistema de login seguro utilizando PHP puro com arquitetura MVC, sessions, rotas protegidas, mensagens de retorno e boas práticas de segurança.
+Sistema de login seguro em **PHP puro** com arquitetura **MVC**, gerenciamento de sessões, rotas protegidas, ACL (controle de acesso), injeção de dependência via container e boas práticas de segurança.
+
 
 ---
 
@@ -14,6 +15,8 @@ Um sistema de login seguro utilizando PHP puro com arquitetura MVC, sessions, ro
 - Autoload com PSR-4
 - **PHPMailer** para envio de e-mails
 - Estrutura MVC customizada
+- ACL com verificação de permissões
+- Injeção de dependência via Service Container
 
 ---
 
@@ -29,7 +32,9 @@ Um sistema de login seguro utilizando PHP puro com arquitetura MVC, sessions, ro
 ✅ **Mensagens dinâmicas de erro e sucesso**  
 ✅ **Separação de responsabilidades (MVC)**  
 ✅ **Armazenamento seguro de senhas** com `password_hash()`  
-✅ **Redirecionamento automático** após login/logout  
+✅ **Redirecionamento automático** após login/logout
+✅ **Templates com renderização dinâmica**
+
 
 ---
 
@@ -72,11 +77,21 @@ INSERT INTO users (username, password) VALUES (
 php-mvc-login-seguro/
 ├── App/
 │   ├── Controllers/
-│   │    ├── AdminController.php
-│   │    ├── BeginController.php
-|   |    ├── ContatoController.php
-│   │    ├── HomeController.php
+│   │    ├── Admin/
+│   │    |    └── AdminController.php
+│   │    ├── Api/
+│   │    ├── Site/
+│   │    |    ├── ContatoController.php
+│   │    |    ├── HomeController.php
+│   │    |    └── PaginaPrincipalController.php
+│   │    └──User/
+│   │    |    ├── UserDeleteController.php
+│   │    |    ├── UserEditController.php
+│   │    |    └── UserRegisterController.php
+│   │    ├── AcessoNegadoController.php
 │   │    └── LoginController.php
+│   ├── Core/
+│   │    └── SessionManager.php
 │   ├── Helpers/
 │   │    ├── Auth.php
 |   |    ├── Csrf.php
@@ -85,7 +100,6 @@ php-mvc-login-seguro/
 │   │    ├── SessionManager.php
 │   │    └── TemplateEngine.php
 │   ├── Middleware/
-│   │    └── Auth.php
 │   ├── Models/
 |   |    ├── MensagemContato.php
 │   │    └── User.php
@@ -103,12 +117,21 @@ php-mvc-login-seguro/
 │       ├── login.php
 │       └── register.php
 ├── config/
-│   └── config.php.example
-│   └── router.php
+│   ├── admin.php
+│   ├── common.php
+│   ├── consts.php
+│   ├── dependencies.php
+│   ├── public.php
+│   ├── config.php.example
+│   ├── router.php
+│   └── user.php
 ├── Core/
+│   ├── Acl.php
+│   ├── Container.php
 │   ├── Controller.php
 │   ├── Database.php
 │   ├── Mailer.php
+│   ├── Request.php
 │   └── Router.php
 ├── public/
 │   ├── .htaccess
@@ -132,11 +155,13 @@ php-mvc-login-seguro/
 
 ## 🧪 Testes manuais
 
-- ✅ Teste de login com credenciais válidas
-- ❌ Redirecionamento ao tentar acessar /dashboard sem login
-- ✅ Logout destrói sessão e redireciona
+- ✅ Login com credenciais válidas
+- ✅ Redirecionamento para dashboard após login
+- ✅ Logout destrói sessão
+- ❌ Acesso ao /dashboard sem login redireciona para login
+- ✅ ACL bloqueia acesso indevido com base em perfil
 
-🙋‍♂️ Autor
+## 🙋‍♂️ Autor
 Desenvolvido com 💙 por [Mihguel da Silva Santos Tavares de Araujo](https://www.linkedin.com/in/mihguel-da-silva-santos-tavares-de-araujo/)
 GitHub: [@mihguelsilva](https://github.com/mihguelsilva)
 
