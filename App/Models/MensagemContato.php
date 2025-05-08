@@ -2,13 +2,17 @@
 namespace App\Models;
 
 use \Core\Database;
+use PDO;
 
 class MensagemContato
 {
-    public static function salvar(array $dados): bool
+    private ?PDO $pdo = null;
+    public function __construct(private Database $database) {
+        $this->pdo = $this->database->connect();
+    }
+    public function salvar(array $dados): bool
     {
-        $pdo = Database::connect();
-        $stmt = $pdo->prepare("INSERT INTO mensagens_contato (nome, email, assunto, mensagem) VALUES (:nome, :email, :assunto, :mensagem)");
+        $stmt = $this->pdo->prepare("INSERT INTO mensagens_contato (nome, email, assunto, mensagem) VALUES (:nome, :email, :assunto, :mensagem)");
         $stmt->bindValue(":nome", $dados['nome']);
         $stmt->bindValue(":email", $dados['email']);
         $stmt->bindValue(":assunto", $dados['assunto']);

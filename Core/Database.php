@@ -6,15 +6,15 @@ use PDOException;
 
 class Database
 {
-    private static $pdo;
+    private ?PDO $pdo = null;
 
-    public static function connect(): PDO
+    public function connect(): PDO
     {
-        if (!self::$pdo) {
+        if ($this->pdo === null) {
             $config = require __DIR__ . '/../config/config.php';
 
             try {
-                self::$pdo = new PDO(
+                $this->pdo = new PDO(
                     "mysql:host={$config['db']['host']};dbname={$config['db']['name']};charset=utf8",
                     $config['db']['user'],
                     $config['db']['pass'],
@@ -24,7 +24,7 @@ class Database
                 dir('Erro de conexão: '.$e->getMessage());
             }
         }
-        return self::$pdo;
+        return $this->pdo;
     }
 }
 ?>

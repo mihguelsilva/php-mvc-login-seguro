@@ -1,25 +1,21 @@
 <?php
-namespace App\Controllers;
+namespace App\Controllers\Site;
 
-use \Core\Controller;
-use \Core\Mailer;
+use \Core\{Controller, Mailer};
 use \App\Models\MensagemContato;
-use \App\Helpers\Csrf;
-use \App\Helpers\Flash;
-use \App\Helpers\Sanitize;
-use \App\Helpers\TemplateEngine;
+use \App\Helpers\{Csrf, Flash, Sanitize, TemplateEngine};
 
 class ContatoController extends Controller
 {
-    public function getContato():void
+    public function __construct(private \App\Core\SessionManager $session, private MensagemContato $mensagemContato) {}
+
+    public function get():void
     {
         $this->view('contato');
     }
 
-    public function enviar(): void
+    public function send(): void
     {
-        Flash::checkSessionStart();
-
         if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
             die('Erro de validação');
         }
@@ -46,7 +42,7 @@ class ContatoController extends Controller
         $enviado = Mailer::send($_ENV['MAIL_TO'], $assunto, $body);
 
         if ($enviado) {
-            MensagemContato::salvar([
+            $this->mensagemContato->salvar([
                 "nome"=>$nome,
                 "email"=>$email,
                 "assunto"=>$assunto,

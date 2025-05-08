@@ -2,32 +2,113 @@
 namespace Core;
 
 class Router
-{
+{   
     private array $routes = [];
+    private array $middlewares = [];
 
-    public function get(string $uri, callable $controller): void
+    public function __construct(
+        private Request $request, 
+        private Acl $acl, 
+        private Container $container
+    ) {}
+
+    public function get(string $uri, callable|array $controller): void
     {
-        $this->routes['GET'][$uri] = $controller;
+        $this->addRoutes('GET', $uri, $controller);
     }
 
-    public function post(string $uri, callable $controller): void
+    public function post(string $uri, callable|array $controller): void
     {
-        $this->routes['POST'][$uri] = $controller;
+        $this->addRoutes('POST', $uri, $controller);
+    }
+
+    public function put(string $uri, callable|array $controller): void
+    {
+        $this->addRoutes('PUT', $uri, $controller);
+    }
+
+    public function delete(string $uri, callable|array $controller): void
+    {
+        $this->addRoutes('DELETE', $uri, $controller);
+    }
+
+    private function addRoutes(string $method, string $uri, callable|array $callback): void
+    {
+        $this->routes[$method][$uri] = $callback;
+    }
+
+    public function middleware(string $method, string $uri, callable|array $callback): void
+    {
+        $this->middlewares[$method][$uri] = $callback;
+    }
+
+    private function controller(callable|array $route, bool $exit = false): void
+    {
+        if (is_array($route) && $route != []) {
+            [$class, $method] = $route;
+
+            $permission = "$class::$method";
+
+            if (!$this->acl->hasAccess($permission)) {
+                http_response_code(403);
+                echo "<script>window.location.href = '/acesso-negado';</script>";
+                exit();
+            }
+
+            $controller = $this->container->get($class);
+
+            if (!is_object($controller) && !class_exists($class)) {
+                throw New \Exception("Classe '{$class}' não existe!");
+            }
+
+            // Definir singleton aqui futuramente
+
+            if (!method_exists($controller, $method)) {
+                throw New \Exception("Método '{$method}' não existe na classe '{$class}'!");
+            }
+
+            call_user_func([$controller, $method], $this->request);
+
+            $exit == false ? null : exit();
+        }
+
+        if ((is_callable($route))) {
+            call_user_func($route);
+
+            $exit == false ? null : exit();
+        }
     }
 
     public function resolve():void
     {
-        $method = $_SERVER['REQUEST_METHOD'];
-        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $method = $this->request->getMethod();
+        $uri = $this->request->getUri();
 
-        $route = $this->routes[$method][$uri] ?? null;
+        $route = $this->routes[$method][$uri] ?? [];
+        $middleware = $this->middlewares[$method][$uri] ?? [];
 
+        $this->controller($middleware);
+        $this->controller($route, true);
+
+        http_response_code(404);
+        header('Content-type', 'text/html');
+        echo 'Método não permitido';
+
+
+
+        /*
         if (is_callable($route)) {
             call_user_func($route);
         } else {
             echo "Erro 404 - Página não encontrada<br> <a href='/home'>Voltar</a>";
         }
+            */
 
+        /**
+         * Método utilizado para executar, de maneira dinâmica, sempre o index. A questão é
+         * que todo o index teria que ter configurado uma estrutura de rotas, que para um projeto
+         * em início, até seria interessante, mas não escalável.
+        */
         /*
         * Nova abordagem ensinada, porém não tão eficaz
         if (isset($this->routes[$method][$uri])) {
