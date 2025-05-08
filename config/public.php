@@ -1,6 +1,5 @@
 <?php
 return [
-    'App\Controllers\AcessoNegadoController::index',
     'App\Controllers\Site\PaginaPrincipalController::get',
     'App\Controllers\Site\ContatoController::get',
     'App\Controllers\Site\ContatoController::send',

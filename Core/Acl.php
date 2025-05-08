@@ -13,7 +13,6 @@ class Acl
         if (in_array($route, $public)) {
             return true;
         }
-
         // Se não houver sessão ativa ou tipo de usuário, bloqueia
         if (!isset($_SESSION['user']) || !isset($_SESSION['user']['group'])) {
             return false;

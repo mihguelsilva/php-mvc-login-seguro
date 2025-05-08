@@ -10,9 +10,9 @@ class UserDeleteController extends Controller
 {
     public function __construct(private SessionManager $session, private User $userModel) {}
 
-    public function get(): void
+    public function get(): string
     {
-        $this->view('user' . DS . 'delete');
+        return $this->view('user' . DS . 'delete');
     }
 
     public function delete(): void

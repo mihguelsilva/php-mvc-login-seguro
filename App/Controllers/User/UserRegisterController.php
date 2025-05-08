@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers\User;
 
-use \Core\{Controller, Mailer};
+use \Core\{Controller, Mailer, Response};
 use \App\Helpers\{Csrf, Flash, Sanitize};
 use \App\Models\{MensagemContato, User};
 
@@ -9,9 +9,9 @@ class UserRegisterController extends Controller
 {
     public function __construct(private User $userModel, private MensagemContato $mensagemContato) {}
 
-    public function get(): void
+    public function get(): string
     {
-        $this->view('register');
+        return $this->view('register');
     }
 
     public function create(): void
@@ -27,13 +27,13 @@ class UserRegisterController extends Controller
 
         if (empty($username || $email || $password || $confirmPassword)) {
             Flash::set('error', 'Preencha todos os campos');
-            $this->view('register');
+            (new Response(400, $this->view('register')))->send();
             exit();
         }
 
         if ($password != $confirmPassword) {
             Flash::set('error', 'Senhas não coindicem');
-            $this->view('register');
+            (new Response(400, $this->view('register')))->send();
             exit();
         }
 
@@ -42,13 +42,13 @@ class UserRegisterController extends Controller
 
         if ($userVerify != null) {
             Flash::set('error', 'Usuário já existe');
-            $this->view('register');
+            (new Response(409, $this->view('register')))->send();
             exit();
         }
 
         if ($emailVerify != null) {
             Flash::set('error', 'Email já existe');
-            $this->view('register');
+            (new Response(409, $this->view('register')))->send();
             exit();
         }
 
@@ -66,7 +66,7 @@ class UserRegisterController extends Controller
         ]);
 
         Flash::set('success', 'Usuário cadastrado com sucesso. Faça login!');
-        $this->view('register');
+        (new Response(201, $this->view('register')))->send();
         exit();
     }
 }

@@ -132,6 +132,7 @@ php-mvc-login-seguro/
 │   ├── Database.php
 │   ├── Mailer.php
 │   ├── Request.php
+│   ├── Response.php
 │   └── Router.php
 ├── public/
 │   ├── .htaccess

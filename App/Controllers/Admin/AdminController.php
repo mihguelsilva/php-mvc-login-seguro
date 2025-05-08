@@ -5,28 +5,24 @@ use App\Core\SessionManager;
 use \Core\Controller;
 use \App\Helpers\{Csrf, Flash, Sanitize};
 use \App\Models\User;
-use SessionHandler;
 
 class AdminController extends Controller
 {
     public function __construct(private SessionManager $session, private User $userModel) {}
 
-    public function index(): void
+    public function index(): string
     {
         $all = $this->userModel->all();
-
-        $this->view('dashboard', ['users'=>$all]);
-        exit();
+        return $this->view('dashboard', ['users'=>$all]);
     }
 
-    public function edit(): void
+    public function edit(): string
     {
         $id = (int) Sanitize::int($_GET['id']) ?? '';
 
         $user = $this->userModel->findById($id);
 
-        $this->view('admin' . DS . 'edit', ['user'=>$user]);
-        exit();
+        return $this->view('admin' . DS . 'edit', ['user'=>$user]);
     }
 
     public function update(): void

@@ -9,9 +9,9 @@ class ContatoController extends Controller
 {
     public function __construct(private \App\Core\SessionManager $session, private MensagemContato $mensagemContato) {}
 
-    public function get():void
+    public function get(): string
     {
-        $this->view('contato');
+        return $this->view('contato');
     }
 
     public function send(): void

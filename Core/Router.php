@@ -42,41 +42,41 @@ class Router
         $this->middlewares[$method][$uri] = $callback;
     }
 
-    private function controller(callable|array $route, bool $exit = false): void
+    private function checkPermissions(string $class, string $method): void
+    {
+        $permission = "$class::$method";
+
+        if (!$this->acl->hasAccess($permission)) {
+            (new Response(403, ['error' => 'Acesso negado'], 'application/json'))->send();
+            exit();
+        }
+    }
+
+    public function controller(callable|array $route): mixed
     {
         if (is_array($route) && $route != []) {
             [$class, $method] = $route;
 
-            $permission = "$class::$method";
-
-            if (!$this->acl->hasAccess($permission)) {
-                http_response_code(403);
-                echo "<script>window.location.href = '/acesso-negado';</script>";
-                exit();
-            }
-
+            $this->checkPermissions($class, $method);
+            
             $controller = $this->container->get($class);
 
             if (!is_object($controller) && !class_exists($class)) {
                 throw New \Exception("Classe '{$class}' não existe!");
             }
 
-            // Definir singleton aqui futuramente
-
             if (!method_exists($controller, $method)) {
                 throw New \Exception("Método '{$method}' não existe na classe '{$class}'!");
             }
 
-            call_user_func([$controller, $method], $this->request);
-
-            $exit == false ? null : exit();
+            return call_user_func([$controller, $method], $this->request);
         }
 
         if ((is_callable($route))) {
-            call_user_func($route);
-
-            $exit == false ? null : exit();
+            return call_user_func($route);
         }
+
+        return false;
     }
 
     public function resolve():void
@@ -88,13 +88,10 @@ class Router
         $middleware = $this->middlewares[$method][$uri] ?? [];
 
         $this->controller($middleware);
-        $this->controller($route, true);
-
-        http_response_code(404);
-        header('Content-type', 'text/html');
-        echo 'Método não permitido';
+        if ($this->controller($route) != false) exit();
 
 
+        (new Response(404, ['error' => 'pagina não encontrada'], 'application/json'))->send();
 
         /*
         if (is_callable($route)) {
