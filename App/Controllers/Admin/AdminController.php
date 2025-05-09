@@ -6,14 +6,24 @@ use \Core\Controller;
 use \App\Helpers\{Csrf, Flash, Sanitize};
 use \App\Models\User;
 
-class AdminController extends Controller
+class AdminController
 {
-    public function __construct(private SessionManager $session, private User $userModel) {}
+    public function __construct(
+        private SessionManager $session, 
+        private User $userModel,
+        private Csrf $csrf,
+        private Flash $flash,
+        private Controller $controller
+        ) {}
 
     public function index(): string
     {
         $all = $this->userModel->all();
-        return $this->view('dashboard', ['users'=>$all]);
+        return $this->controller->view('dashboard', [
+            'users'=>$all,
+            'display' => $this->flash->display(),
+            'csrf' => $this->csrf->getTokenInput()
+        ]);
     }
 
     public function edit(): string
@@ -22,14 +32,16 @@ class AdminController extends Controller
 
         $user = $this->userModel->findById($id);
 
-        return $this->view('admin' . DS . 'edit', ['user'=>$user]);
+        return $this->controller->view('admin' . DS . 'edit', [
+            'user'=>$user,
+            'display' => $this->flash->display(),
+            'csrf' => $this->csrf->getTokenInput()
+        ]);
     }
 
     public function update(): void
     {
-        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
-            die('Erro de validação');
-        }
+        $this->csrf->verifyToken(htmlspecialchars($_POST['csrf_token']));
 
         $id = (int) Sanitize::int($_POST['id']) ?? '';
         $username = Sanitize::string($_POST['username']) ?? '';
@@ -37,11 +49,11 @@ class AdminController extends Controller
         $group = Sanitize::string($_POST['group']) ?? '';
 
         if ($this->userModel->updateUser($username, $email,(int) $id, $group)) {
-            Flash::set('success', 'Dados do usuário atualizados com sucesso');
+            $this->flash->set('success', 'Dados do usuário atualizados com sucesso');
             header('Location: /admin/users/edit?id='.$id);
             exit();
         } else {
-            Flash::set('error', 'Alguma coisa deu errado');
+            $this->flash->set('error', 'Alguma coisa deu errado');
             $this->edit((int) $id);
             exit();
         }
@@ -49,18 +61,16 @@ class AdminController extends Controller
 
     public function delete(): void
     {
-        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
-            die('Erro de validação');
-        }
+        $this->csrf->verifyToken(htmlspecialchars($_POST['csrf_token']));
 
         $id = (int) Sanitize::int($_POST['id']) ?? '';
 
         if ($this->userModel->deleteUser($id)) {
-            Flash::set('success', 'Usuário deletado com sucesso');
+            $this->flash->set('success', 'Usuário deletado com sucesso');
             $this->index();
             exit();
         } else {
-            Flash::set('error', 'Não foi possível deletar o usuário selecionado');
+            $this->flash->set('error', 'Não foi possível deletar o usuário selecionado');
             $this->index();
             exit();
         }

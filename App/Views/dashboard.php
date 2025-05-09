@@ -1,5 +1,5 @@
 <?php ob_start(); ?>
-<?=App\Helpers\Flash::display()?>
+<?=$display?>
 <div class="container mt-5">
   <h2>👥 Gerenciamento de Usuários</h2>
   <table class="table table-striped mt-4">
@@ -22,7 +22,7 @@
           <td>
             <a href="/admin/users/edit?id=<?= $user['id'] ?>" class="btn btn-sm btn-primary">✏️ Editar</a>
             <form action="/admin/users/delete" method="POST" style="display:inline;">
-              <?=\App\Helpers\Csrf::getTokenInput();?>
+              <?=$csrf?>
               <input type="hidden" name="id" value="<?= $user['id'] ?>">
               <button type="submit" class="btn btn-sm btn-danger">🗑️ Excluir</button>
             </form>

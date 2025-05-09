@@ -5,20 +5,27 @@ use \Core\{Controller, Mailer, Response};
 use \App\Helpers\{Csrf, Flash, Sanitize};
 use \App\Models\{MensagemContato, User};
 
-class UserRegisterController extends Controller
+class UserRegisterController
 {
-    public function __construct(private User $userModel, private MensagemContato $mensagemContato) {}
+    public function __construct(
+        private User $userModel, 
+        private MensagemContato $mensagemContato,
+        private Csrf $csrf, 
+        private Flash $flash,
+        private Controller $controller
+        ) {}
 
     public function get(): string
     {
-        return $this->view('register');
+        return $this->controller->view('register', [
+            'display' => $this->flash->display(),
+            'csrf' => $this->csrf->getTokenInput()
+        ]);
     }
 
     public function create(): void
     {
-        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
-            die('Erro de validação');
-        }
+        $this->csrf->verifyToken(htmlspecialchars($_POST['csrf_token']));
 
         $username = Sanitize::string($_POST['username']) ?? '';
         $email = Sanitize::email($_POST['email']) ?? '';
@@ -26,14 +33,14 @@ class UserRegisterController extends Controller
         $confirmPassword = Sanitize::string($_POST['confirm_password']) ?? '';
 
         if (empty($username || $email || $password || $confirmPassword)) {
-            Flash::set('error', 'Preencha todos os campos');
-            (new Response(400, $this->view('register')))->send();
+            $this->flash->set('error', 'Preencha todos os campos');
+            (new Response(400, $this->controller->view('register')))->send();
             exit();
         }
 
         if ($password != $confirmPassword) {
-            Flash::set('error', 'Senhas não coindicem');
-            (new Response(400, $this->view('register')))->send();
+            $this->flash->set('error', 'Senhas não coindicem');
+            (new Response(400, $this->controller->view('register')))->send();
             exit();
         }
 
@@ -41,14 +48,14 @@ class UserRegisterController extends Controller
         $emailVerify = $this->userModel->findByEmail($email);
 
         if ($userVerify != null) {
-            Flash::set('error', 'Usuário já existe');
-            (new Response(409, $this->view('register')))->send();
+            $this->flash->set('error', 'Usuário já existe');
+            (new Response(409, $this->controller->view('register')))->send();
             exit();
         }
 
         if ($emailVerify != null) {
-            Flash::set('error', 'Email já existe');
-            (new Response(409, $this->view('register')))->send();
+            $this->flash->set('error', 'Email já existe');
+            (new Response(409, $this->controller->view('register')))->send();
             exit();
         }
 
@@ -65,8 +72,8 @@ class UserRegisterController extends Controller
             "mensagem"=>nl2br(htmlspecialchars($body))
         ]);
 
-        Flash::set('success', 'Usuário cadastrado com sucesso. Faça login!');
-        (new Response(201, $this->view('register')))->send();
+        $this->flash->set('success', 'Usuário cadastrado com sucesso. Faça login!');
+        (new Response(201, $this->controller->view('register')))->send();
         exit();
     }
 }

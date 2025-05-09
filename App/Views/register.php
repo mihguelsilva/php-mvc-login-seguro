@@ -2,7 +2,7 @@
 
 <div class="row justify-content-center">
   <div class="col-md-6">
-   <?=App\Helpers\Flash::display()?>
+   <?=$display?>
     <div class="card shadow rounded">
 
       <div class="card-body">
@@ -17,7 +17,7 @@
         <?php endif; ?>
 
         <form method="post" action="/register">
-          <?=\App\Helpers\Csrf::getTokenInput();?>
+          <?=$csrf?>
 
           <div class="mb-3">
             <label for="username" class="form-label">Usuário</label>

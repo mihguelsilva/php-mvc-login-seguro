@@ -7,7 +7,6 @@ class TemplateEngine
     {
         if (!file_exists($file)) {
             error_log("Template não encontrado: $file");
-            Flash::set('error', 'Erro interno: template ausente');
             return '';
         }
 

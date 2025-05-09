@@ -1,34 +1,35 @@
 <?php
 namespace App\Helpers;
 
+use \App\Core\SessionManager;
+
 class Csrf
 {
-    private static function generateToken(): string
-    {
-        Flash::checkSessionStart();
+    public function __construct(private SessionManager $session) {}
 
-        if(empty($_SESSION['csrf_token']) || $_SESSION['csrf_token_expire'] < time()) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-            $_SESSION['csrf_token_expire'] = time() + 1800;
+    private function generateToken(): string
+    {
+        if(empty($this->session->get('csrf_token')) || $this->session->get('csrf_token_expire') < time()) {
+            $this->session->set('csrf_token', bin2hex(random_bytes(32)));
+            $this->session->set('csrf_token_expire', time() + 1800);
         }
         return $_SESSION['csrf_token'];
     }
 
-    public static function validateToken(string $token): bool
+    public function validateToken(string $token): bool
     {
-        Flash::checkSessionStart();
-        return hash_equals($_SESSION['csrf_token'] ?? '', $token);
+        return hash_equals($this->session->get('csrf_token') ?? '', $token);
     }
 
-    public static function getTokenInput(): string
+    public function getTokenInput(): string
     {
-        $token = self::generateToken();
+        $token = $this->generateToken();
         return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($token) . '">';
     }
 
-    public static function verifyToken(?string $token): void
+    public function verifyToken(?string $token): void
     {
-        if (empty($token) || !self::validateToken($token)) {
+        if (empty($token) || !$this->validateToken($token)) {
             (new \Core\Response(419, ['error' => 'Token CSRF inválido ou ausente'],'application/json'))->send();
         }
     }

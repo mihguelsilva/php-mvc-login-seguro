@@ -7,27 +7,36 @@ use \App\Core\SessionManager;
 use \App\Models\User;
 use \App\Helpers\{Flash, Csrf, Sanitize};
 
-class LoginController extends Controller
+class LoginController
 {
 
-    public function __construct(private SessionManager $session, private User $userModel) {}
+    public function __construct(
+        private SessionManager $session, 
+        private User $userModel,
+        private Csrf $csrf, 
+        private Flash $flash,
+        private Controller $controller
+        ) {}
 
     public function get(): string
     {
-        return $this->view('login');
+        return $this->controller->view('login', [
+            'display' => $this->flash->display(),
+            'csrf' => $this->csrf->getTokenInput()
+        ]);
     }
 
     public function login(): void
     {
-        Csrf::verifyToken($_POST['csrf_token']);
+        $this->csrf->verifyToken($_POST['csrf_token']);
 
         $username = Sanitize::string($_POST['username']) ?? '';
         $password = Sanitize::string($_POST['password']) ?? '';
 
         if (empty($username || $password)) {
-            Flash::set('error', 'Preencha todos os campos');
-            (new Response(400, $this->view('login')))->send();
-            return;
+            $this->flash->set('error', 'Preencha todos os campos');
+            (new Response(400, $this->$this->get()))->send();
+            exit();
         }
 
         $user = $this->userModel->findByUsername($username);
@@ -43,8 +52,8 @@ class LoginController extends Controller
             header('Location: /home');
             exit();
         } else {
-            Flash::set('error', 'Usuário ou senha incorretos');
-            (new Response(401, $this->view('login')))->send();
+            $this->flash->set('error', 'Usuário ou senha incorretos');
+            (new Response(401, $this->get()))->send();
             exit();
         }
     }

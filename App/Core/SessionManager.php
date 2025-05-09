@@ -16,9 +16,14 @@ class SessionManager
         $_SESSION[$key] = $value;
     }
 
+    public function unset(string $key): void
+    {
+        unset($_SESSION[$key]);
+    }
+
     public function get(string $key): mixed
     {
-        return $_SESSION[$key] ?? null;
+        return $_SESSION[$key] ?? false;
     }
 
     public function validate(): void
@@ -28,6 +33,15 @@ class SessionManager
         }
 
         $this->set('LAST-ACTIVITY', (int) time());
+    }
+
+    public function check(string $key, string $value = ''): bool
+    {
+        if ($this->get($key)) {
+            return $_SESSION[$key]['group'] === $value;
+        }
+
+        return false;
     }
 
     public function destroy(): void

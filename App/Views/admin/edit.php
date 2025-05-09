@@ -1,9 +1,9 @@
 <?php ob_start(); ?>
-<?=\App\Helpers\Flash::display()?>
+<?=$display?>
 <div class="container mt-5">
     <h2>✏️ Editar Usuário</h2>
     <form action="/admin/users/update" method="POST">
-        <?=\App\Helpers\Csrf::getTokenInput();?>
+        <?=$csrf?>
         <input type="hidden" name="id" value="<?= htmlspecialchars($user['id']) ?>">
 
         <div class="mb-3">

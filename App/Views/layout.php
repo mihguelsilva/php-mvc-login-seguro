@@ -77,11 +77,11 @@
                 <div class="d-flex text-light">
                 <a class="nav-link <?php echo ($_SERVER['REQUEST_URI'] == '/contato') ? 'active-page' : ''; ?>" href="/contato" class='btn btn-outline-danger'>Contato</a>
             </div>
-                <?php if (App\Helpers\Auth::check()): ?>
+                <?php if ($check): //if (App\Helpers\Auth::check()): ?>
                     <li class="nav-item">
                         <a class="nav-link <?php echo ($_SERVER['REQUEST_URI'] == '/home') ? 'active-page' : ''; ?>" href="/home" class='btn btn-outline-primary'>HOME</a>
                     </li>
-                    <?php if (App\Helpers\Auth::admin()): ?>
+                    <?php if ($admin): //if (App\Helpers\Auth::admin()): ?>
                         <li class="nav-item">
                             <a class="nav-link <?php echo ($_SERVER['REQUEST_URI'] == '/admin/users') ? 'active-page' : ''; ?>" href="/admin/users" class='btn btn-outline-primary'>Dashboard</a>
                         </li>

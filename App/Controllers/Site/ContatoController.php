@@ -5,20 +5,26 @@ use \Core\{Controller, Mailer};
 use \App\Models\MensagemContato;
 use \App\Helpers\{Csrf, Flash, Sanitize, TemplateEngine};
 
-class ContatoController extends Controller
+class ContatoController
 {
-    public function __construct(private \App\Core\SessionManager $session, private MensagemContato $mensagemContato) {}
+    public function __construct(
+        private MensagemContato $mensagemContato,
+        private Csrf $csrf, 
+        private Flash $flash,
+        private Controller $controller
+        ) {}
 
     public function get(): string
     {
-        return $this->view('contato');
+        return $this->controller->view('contato', [
+            'display' => $this->flash->display(),
+            'csrf' => $this->csrf->getTokenInput()
+        ]);
     }
 
     public function send(): void
     {
-        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
-            die('Erro de validação');
-        }
+        $this->csrf->verifyToken(htmlspecialchars($_POST['csrf_token']));
 
         $nome = Sanitize::string($_POST['nome']) ?? '';
         $email = Sanitize::email($_POST['email']) ?? '';
@@ -26,7 +32,7 @@ class ContatoController extends Controller
         $mensagem = Sanitize::string($_POST['mensagem']) ?? '';
 
         if (empty($nome) || empty($email) || empty($mensagem)) {
-            Flash::set('error', 'Preencha todos os campos obrigatórios');
+            $this->flash->set('error', 'Preencha todos os campos obrigatórios');
             return;
         }
 
@@ -48,9 +54,9 @@ class ContatoController extends Controller
                 "assunto"=>$assunto,
                 "mensagem"=>$mensagem
             ]);
-            Flash::set('success', 'Mensagem enviada com sucesso!');
+            $this->flash->set('success', 'Mensagem enviada com sucesso!');
         } else {
-            Flash::set('error', 'Erro ao enviar mensagem. Tente novamente mais tarde');
+            $this->flash->set('error', 'Erro ao enviar mensagem. Tente novamente mais tarde');
         }
         header('Location: /contato');
         exit();

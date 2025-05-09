@@ -6,22 +6,27 @@ use \App\Core\SessionManager;
 use \App\Helpers\{Csrf, Flash, Sanitize};
 use \App\Models\User;
 
-class UserDeleteController extends Controller
+class UserDeleteController
 {
-    public function __construct(private SessionManager $session, private User $userModel) {}
+    public function __construct(
+        private SessionManager $session, 
+        private User $userModel,
+        private Csrf $csrf, 
+        private Flash $flash,
+        private Controller $controller
+        ) {}
 
     public function get(): string
     {
-        return $this->view('user' . DS . 'delete');
+        return $this->controller->view('user' . DS . 'delete', [
+            'display' => $this->flash->display(),
+            'csrf' => $this->csrf->getTokenInput()
+        ]);
     }
 
     public function delete(): void
     {
-        Flash::checkSessionStart();
-
-        if (!isset($_POST['csrf_token']) || !Csrf::validateToken($_POST['csrf_token'])) {
-            die('Erro de validação');
-        }
+        $this->csrf->verifyToken(htmlspecialchars($_POST['csrf_token']));
 
         $userId = (int) Sanitize::int($_SESSION['user']['id']);
 
@@ -29,7 +34,7 @@ class UserDeleteController extends Controller
             header('Location: /logout');
             exit();
         } else {
-            Flash::set('error', 'Erro durante deleção do usuário');
+            $this->flash->set('error', 'Erro durante deleção do usuário');
             header('/user/delete');
             exit();
         }
